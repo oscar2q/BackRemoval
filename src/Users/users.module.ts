@@ -8,7 +8,8 @@ import { clientes } from 'src/Entitys/Cliente.entity';
 
 @Module({
     imports:[ TypeOrmModule.forFeature([ clientes ]) ],
-    providers: [UsersService],
-    controllers:[ UsersController ]
+    providers:[UsersService],
+    controllers:[UsersController],
+    exports:[UsersService],
 })
-export class UsersModule {}
+export class UsersModule{}

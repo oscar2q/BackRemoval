@@ -1,16 +1,15 @@
 /* eslint-disable prettier/prettier */
-import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum Genero {
     hombre = "H",
     mujer = "M",
-}
+};
 
 @Entity()
 export class clientes{
 
     @PrimaryGeneratedColumn("uuid")
-    @Generated("uuid")
     id_cliente:string;
 
     @Column({type:"varchar",length:40})
@@ -30,7 +29,7 @@ export class clientes{
     })
     genero:string;
 
-    @Column({type:"varchar",length:20, })
+    @Column({type:"varchar",length:100, })
     contrasena:string;
 
     @Column({type:"varchar",length:30 })

@@ -4,7 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { clientes } from './Entitys/Cliente.entity';
+//import { UserAuthMoModule } from './AuthUser/user-auth-mo.module';
 import { UsersModule } from './Users/users.module';
+import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
 
 
 @Module({
@@ -23,8 +25,9 @@ import { UsersModule } from './Users/users.module';
               retryDelay:6000,
               autoLoadEntities:true
             }),
+  AuthJwtModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ],
+  providers: [AppService, ],
 })
 export class AppModule {}
