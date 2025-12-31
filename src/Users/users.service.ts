@@ -2,19 +2,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { clientes } from 'src/Entitys/Cliente.entity';
-import {  Repository } from 'typeorm';
+import {Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BDB, passwor, userIntBasic } from 'src/interfaces/userinterfaces';
-/*import { JwtService } from '@nestjs/jwt';*/
+import { getUserObjectToken } from 'src/auth-jwt/interface/jsonToken.interfaces';
 @Injectable()
 export class UsersService {
     private saltOrRounds:number = 7;
 
     constructor(
         @InjectRepository(clientes)
-        private ClienteRepository:Repository<clientes>,
-/*        private jwtService:JwtService,
-*/  
+        private ClienteRepository:Repository<clientes>,  
 ){}
 
     public async getUserDates(correoelectronico:string,/*password:string*/):Promise<clientes | null>{
@@ -24,9 +22,6 @@ export class UsersService {
         .select(['clientes.ubicacion','clientes.genero','clientes.apellido','clientes.correoelectronico','clientes.nombre_user' ])
         .where('clientes.correoelectronico = :correoelectronico',{ correoelectronico })
         .getOne();
-            
-            //const confirmPassword = await bcrypt.compare(password,user!.contrasena);
-        //console.log("contraseña: "+user?.contrasena);
 
         return user;
     }
@@ -52,23 +47,12 @@ export class UsersService {
         contrasena:string,
         ubicacion:string
     ):Promise<boolean>{
-        console.log({
-            correo:correoelectronico,
-            nameUser,
-            apellido,
-            genero,
-            contrasena,
-            ubicacion
-        });
 
         const hashPassword = await bcrypt.hash(contrasena,this.saltOrRounds);
      
         const InsertUser:Promise<boolean> = await this.ClienteRepository
         .query('select insertnewuser($1, $2, $3, $4, $5, $6)',
-            [correoelectronico,nameUser,apellido,genero,hashPassword,ubicacion]) as Promise<boolean>
-                 
-            console.log(InsertUser);
-        
+            [correoelectronico,nameUser,apellido,genero,hashPassword,ubicacion]) as Promise<boolean>        
             return InsertUser;        
         }
 
@@ -79,9 +63,7 @@ export class UsersService {
             ,'clientes.apellido','clientes.contrasena','clientes.ubicacion'])
         .where('clientes.correoelectronico = :correoelectronico',{correoelectronico:correo})
         .getOne();
-        console.log(user);
             const passwordVerification = await bcrypt.compare(contrasena,user!.contrasena);
-            console.log(passwordVerification);
             return passwordVerification ? user : null;
     }
 
@@ -95,30 +77,47 @@ export class UsersService {
     
         const verificationEmail:BDB = email[0] as BDB;
 
-        console.log(verificationEmail.verificationemail);
-
         if(verificationEmail.verificationemail){
             getPassword = await this.ClienteRepository
             .query('select contrasena from clientes WHERE correoelectronico = $1 ',
                 [correo]) as Promise<Array<object>>;
-            //console.log(getPassword);
             
             const passwordGet:passwor = getPassword[0] as passwor;
-                console.log(passwordGet);
+
             const verificationPassword = await bcrypt.compare(password,passwordGet.contrasena);
-                console.log(verificationPassword);
                 if(verificationPassword){
                     userObject = await this.ClienteRepository
                     .query(
-                        `SELECT correoelectronico, nombre_user, apellido, genero, ubicacion FROM clientes 
+                        `SELECT id_cliente, correoelectronico, nombre_user, apellido, genero, ubicacion FROM clientes 
                         WHERE correoelectronico = $1`, [correo]) as Promise<Array<object>>;  
-                    user = userObject[0]  as userIntBasic;    
+                    user = userObject[0]  as userIntBasic;
                     return user;
                 }
                 return false;
         }
         return false;
     }     
-      
+
+
+    public async getDatesUserForId(id:string):Promise<any>{
+
+        const userDate:Array<object> = await this.ClienteRepository.query('SELECT dateUserForId($1)',[id]) as Array<object>;
+        const userObject:getUserObjectToken =  userDate[0] as getUserObjectToken;
+        const userParentecisQuitar:string = userObject.dateuserforid.slice(1,-1);
+        
+        console.log(userParentecisQuitar);
+
+        const [
+            id_cliente,
+            correoelectronico,
+            nombre_user,
+            apellido,
+            genero,
+            contrasena,
+            ubicacion
+        ] = userParentecisQuitar.split(','); 
+
+        return { id_cliente,correoelectronico,nombre_user, apellido, genero, ubicacion};
+    }
 
 }

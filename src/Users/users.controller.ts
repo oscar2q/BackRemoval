@@ -40,15 +40,6 @@ export class UsersController {
         const contrasena:string = Headers['contrasena'];
         const ubicacion:string = Headers['ubicacion'];
 
-        console.log({
-            email:email,
-            username:nameUser,
-            apellido:apellido,
-            genero:genero,
-            contrasena:contrasena,
-            ubicacion:ubicacion
-        });
-
         return this.UserServices.InsertUserNew( email, nameUser, apellido, genero, contrasena, ubicacion );
     }   
 
@@ -65,6 +56,7 @@ export class UsersController {
     public getVerificationEmail(@Headers() Headers:Record<string,string>):Promise<userIntBasic | boolean>{
         const email = Headers['email'];
         const password = Headers['contrasena'];
+        console.log(email,password);
         //return this.UserServices.getUserCorreoPasswordVerification(email,password);
         return this.UserServices.verificationCorreoPassword(email,password);
     }

@@ -4,10 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { clientes } from './Entitys/Cliente.entity';
-//import { UserAuthMoModule } from './AuthUser/user-auth-mo.module';
 import { UsersModule } from './Users/users.module';
 import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
-
 
 @Module({
   imports: [
@@ -28,6 +26,6 @@ import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
   AuthJwtModule,
   ],
   controllers: [AppController, ],
-  providers: [AppService, ],
+  providers: [AppService,  ],
 })
 export class AppModule {}

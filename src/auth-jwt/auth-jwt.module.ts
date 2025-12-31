@@ -13,7 +13,7 @@ import { jwtContant } from './keyJwt';
     JwtModule.register({
       global:true,
       secret:jwtContant.secret,
-      signOptions:{expiresIn:'172800000'} //2 dias
+      signOptions:{expiresIn:'7d'} //2 dias
     }),
   ],
   controllers: [AuthJwtController],
