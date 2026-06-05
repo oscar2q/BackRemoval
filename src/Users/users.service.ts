@@ -85,6 +85,7 @@ export class UsersService {
             const passwordGet:passwor = getPassword[0] as passwor;
 
             const verificationPassword = await bcrypt.compare(password,passwordGet.contrasena);
+            console.log(verificationPassword);
                 if(verificationPassword){
                     userObject = await this.ClienteRepository
                     .query(

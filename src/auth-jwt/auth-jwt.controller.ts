@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Headers, Req, UseGuards} from '@nestjs/common';
+import { Controller, Get, Headers, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
 import { AuthJwtService } from './auth-jwt.service';
 import { Request } from 'express';
 import { user } from 'src/interfaces/userinterfaces';
@@ -12,16 +12,17 @@ export class AuthJwtController{
     constructor( private authJwtServiceUser:AuthJwtService,){}
 
     @Get('Loggin')
-    protected logginUser(@Headers() headers:Record<string,string> ):Promise<boolean | { access_token:string, refresh_token:string }>{
+    protected logginUser(@Headers() headers:Record<string,string> ):Promise<{ access_token:string, refresh_token:string }>{
+        console.log("aqui");
         const correo = headers['correo'];
         const password = headers['contrasena'];
-        if( correo === null && password === null ){
-            return new Promise((resolver)=>{ resolver(false); });
+        console.log(correo,password);
+        if( !correo || !password ){
+            throw new UnauthorizedException({status:'401',message:'Error los datos a ingresar son incorrectos'});
         }
         const tokens = this.authJwtServiceUser.logginUser(correo, password);
         return tokens;
      }
-
 
      @UseGuards(TokenGuard)
      @Get('decryptedJwt')
@@ -34,6 +35,12 @@ export class AuthJwtController{
     protected refreshToken(@Req() request:Request):Promise<{access_token:string,refresh_token:string}>{
         const tokenRefresh:string = request.cookies.userTokensRefresh as string;
         return this.authJwtServiceUser.refreshTokenAcessToken(tokenRefresh);      
+    }
+
+
+    @Get('verificationToken')
+    protected verification(){
+        
     }
 
 }

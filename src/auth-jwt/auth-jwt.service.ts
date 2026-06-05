@@ -13,7 +13,8 @@ export class AuthJwtService {
      private jwtService: JwtService){}
 
      
-    public async logginUser(correo:string, password:string):Promise<{access_token:string, refresh_token:string} | boolean>{
+    public async logginUser(correo:string, password:string):Promise<{ access_token: string; refresh_token: string; }>{
+        console.log("aqui");
         const userDates: userIntBasic | boolean = await this.authJwtServiceUser.verificationCorreoPassword(correo, password);
         if( typeof(userDates) === 'object'){
             const { id_cliente, ...rest} = userDates;
@@ -23,7 +24,7 @@ export class AuthJwtService {
               refresh_token: await this.jwtService.signAsync({sub:id_cliente,}),
             }
         }
-        return new Promise((resolve) => { resolve(false) });
+        throw new UnauthorizedException();
     }
 
     public async descriptantoTokenVerification(access_token:string):Promise<any>{
@@ -47,7 +48,8 @@ export class AuthJwtService {
         try{
             const verificationToken:jsonTokenIdUser = await this.jwtService.verifyAsync(refreshToken,{ secret:jwtContant.secret });
             const userDate = await this.authJwtServiceUser.getDatesUserForId(verificationToken.sub) as userIntBasic;
-            const { correoelectronico,nombre_user,apellido,genero,ubicacion } = userDate;            
+            const { correoelectronico,nombre_user,apellido,genero,ubicacion } = userDate; 
+            console.log(userDate);           
             return {
                   access_token: await this.jwtService.signAsync({correoelectronico,nombre_user,apellido,genero,ubicacion},{ secret:jwtContant.secret,expiresIn:'2d' }),
                   refresh_token: await this.jwtService.signAsync({sub:userDate.id_cliente})

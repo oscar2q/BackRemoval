@@ -18,8 +18,7 @@ export class TokenGuard implements CanActivate{
             if(!token){ throw new UnauthorizedException();  }
             try{
                     if( typeof(token) === 'string'){
-                        const userToken = await this.jwtService.verifyAsync(token,
-                        { secret:jwtContant.secret}) as Promise<any>;                        
+                        const userToken = await this.jwtService.verifyAsync(token,{ secret:jwtContant.secret}) as Promise<any>;                        
                         request['user'] = userToken;
                     }
             }catch{
@@ -30,7 +29,8 @@ export class TokenGuard implements CanActivate{
 
     private extractTokenFromHeader(@Req() request:Request):string | boolean{
         const token:jsonToken = request.cookies as jsonToken;
-        return token.userTokensAcces !== null ? token.userTokensAcces : false; 
+        console.log(token.access_token);
+        return token.access_token !== null ? token.access_token : false; 
     }
 
 }

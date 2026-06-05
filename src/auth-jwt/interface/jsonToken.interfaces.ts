@@ -7,7 +7,7 @@ export interface jsonTokenIdUser{
 }
 
 export interface jsonToken{
-    userTokensAcces:string;
+    access_token:string;
     userTokensRefresh:string;
 }
 

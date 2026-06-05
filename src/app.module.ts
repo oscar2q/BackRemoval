@@ -24,6 +24,7 @@ import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
               autoLoadEntities:true
             }),
   AuthJwtModule,
+  
   ],
   controllers: [AppController, ],
   providers: [AppService,  ],
